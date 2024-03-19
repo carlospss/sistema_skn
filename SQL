@@ -1,0 +1,71 @@
+CREATE DATABASE skn;
+USE skn;
+
+CREATE TABLE Admin(
+	
+    usuario VARCHAR(250),
+    senha VARCHAR(250)
+
+);
+
+CREATE TABLE Cliente(
+	
+	cpf VARBINARY(100) PRIMARY KEY,
+	nome VARCHAR(200) NOT NULL,
+	telefone VARBINARY(50) NOT NULL,
+	rg VARBINARY(100) UNIQUE,
+	email VARBINARY(180) UNIQUE,
+	cep VARCHAR(9) NOT NULL,
+	rua VARCHAR(200) NOT NULL,
+	bairro VARCHAR(200) NOT NULL,
+	numero VARBINARY(30),
+	complemento VARCHAR(50),
+	cidade VARCHAR(100) NOT NULL,
+	uf VARCHAR(2) NOT NULL,
+	senha VARCHAR(250) NOT NULL,
+	dt_cadastro DATE NOT NULL,
+	hr_cadastro TIME NOT NULL
+);
+
+CREATE TABLE Negociacao(
+
+	
+	id_negociacao INT AUTO_INCREMENT PRIMARY KEY,
+	cpf_cliente_fk VARBINARY(100),
+	valor_imovel FLOAT NOT NULL,
+	valor_financiamento FLOAT NOT NULL,
+	valor_fgts FLOAT,
+	cidade_imovel VARCHAR(200) NOT NULL,
+	banco VARCHAR(170) NOT NULL,
+	cartorio VARCHAR(200) NOT NULL,
+	dt_negociacao DATE NOT NULL, 
+	hr_negociacao TIME NOT NULL,
+	status ENUM('EM ANDAMENTO', 'FINALIZADO'),
+	CONSTRAINT cpf_cliente_fk FOREIGN KEY(cpf_cliente_fk) REFERENCES Cliente(cpf)
+);
+
+CREATE TABLE Etapas(
+
+	id_etapa INT AUTO_INCREMENT,
+	etapa ENUM('Análise de Crédito',
+		'Aguardando documentação Completa',
+		'Vistoria do Imóvel',
+		'Débito de FGTS',
+		'Análise Jurídica',
+		'Interveniente Quitante',
+		'Emissão de Contrato',
+		'Aguardando documentos complementares',
+		'Registro em Cartório',
+		'Finalizado') NOT NULL,
+	despacho TEXT NOT NULL,
+	id_negociacao_fk INT,
+	cpf_cliente VARBINARY(100),
+	dt_etapa DATE NOT NULL,
+	hr_etapa TIME NOT NULL,
+	status ENUM('ATUAL', 'PASSADA'),
+	PRIMARY KEY(id_etapa, id_negociacao_fk, cpf_cliente),
+
+	CONSTRAINT id_negociacao_fk FOREIGN KEY(id_negociacao_fk) REFERENCES Negociacao(id_negociacao),
+	CONSTRAINT cpf_cliente FOREIGN KEY(cpf_cliente) REFERENCES Cliente(cpf)
+
+);
